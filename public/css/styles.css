@@ -1,0 +1,15 @@
+.main-margin {
+  margin-left:10%;
+  margin-top:4%;
+}
+body {
+  display: block;
+  margin: auto;
+  width:90%; /* hoặc bất kỳ giá trị nào bạn muốn */
+}
+.custom-label {
+  text-align: center;
+}
+.form-group {
+  padding: 1%
+}

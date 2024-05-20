@@ -1,0 +1,27 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+  <a href="/">Home</a>
+  <a href="/gallery.html">Gallery</a>
+  <h3>Hình ảnh</h3>
+  <div id="image-gallery"></div>
+  <h3>Video</h3>
+  <div id="video-gallery"></div>
+
+  <script>
+    $(document).ready(function () {
+      $.get("/get-uploads", function (files) {
+        files.forEach(function (file) {
+          var fileExtension = file.split(".").pop();
+          var filePath = "/uploads/" + file;
+          if (fileExtension === 'jpg' || fileExtension === 'png' || fileExtension === 'jpeg' ) {
+          $('#image-gallery').append('<img src="' + filePath + '" style="width: 33%; height: auto; max-height: 56.25vw;" />');
+        } else if (fileExtension === 'mp4' || fileExtension === 'mov') {
+          $('#video-gallery').append('<video style="width: 33%; height: auto; max-height: 56.25vw;" controls><source src="' + filePath + '" type="video/' + (fileExtension === 'mov' ? 'quicktime' : 'mp4') + '">Your browser does not support the video tag.</video>');
+        }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
