@@ -4,23 +4,22 @@ const path = require("path");
 const app = express();
 const multer = require("multer");
 const includeMulter = multer().any();
+const routes = require("./routes/");
 require("./util/readenv").config();
 let open;
 
+var QRCode = require('qrcode')
 const os = require("os");
 const networkInterfaces = os.networkInterfaces();
 
-  for (let interface in networkInterfaces) {
-    for (let interfaceInfo of networkInterfaces[interface]) {
-      if (interfaceInfo.family === "IPv4" && !interfaceInfo.internal) {
-        var ip = "http://" + interfaceInfo.address + ":" + process.env.PORT;
-        console.log(ip);
-      }
+for (let interface in networkInterfaces) {
+  for (let interfaceInfo of networkInterfaces[interface]) {
+    if (interfaceInfo.family === "IPv4" && !interfaceInfo.internal) {
+      var ip = "http://" + interfaceInfo.address + ":" + process.env.PORT;
+      console.log(ip);
     }
   }
-
-
-
+}
 // app.use(multer().any());
 function shouldParseRequest(req) {
   const currentMethod = req.method;
@@ -51,8 +50,8 @@ app.use(function (req, res, next) {
 app.use(express.static("public"));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.get('/get-uploads', function(req, res) {
-  fs.readdir(path.join(__dirname, 'uploads'), function(err, files) {
+app.get('/get-uploads', function (req, res) {
+  fs.readdir(path.join(__dirname, 'uploads'), function (err, files) {
     if (err) {
       res.status(500).send('Error reading files');
     } else {
@@ -61,16 +60,14 @@ app.get('/get-uploads', function(req, res) {
   });
 });
 
-const routes = require("./routes/");
-
-
-app.get('/api/interface-address', function(req, res) {
-  res.json({ interfaceAddress: ip });
+app.get('/api/interface-address', function (req, res) {
+  QRCode.toDataURL(ip, function (err, url) {
+    res.json({ interfaceAddress: ip, QR: url });
+   // console.log(url)
+  })
 });
 
 app.use("/", routes);
-
-
 
 app.listen(process.env.PORT, async function () {
   // redirect tới ip

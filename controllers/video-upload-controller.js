@@ -8,7 +8,8 @@ module.exports.initUploadPage = function(req, res) {
 }
 
 module.exports.uploadFile = function(req, res) {
-  var upload = multer(fileUploadConfig).single('user-file');
+  var upload = multer(fileUploadConfig).array('user-file',1000);
+  let links = [];
   upload(req, res, function(uploadError){
     if(uploadError){
       var errorMessage;
@@ -21,22 +22,29 @@ module.exports.uploadFile = function(req, res) {
         error: errorMessage
       });
     }
-    const fileId = req.file.filename.split('-')[0];
-    const link = 'http://' + req.hostname + ':' + process.env.PORT + '/video/' + fileId
 
-    res.json({
-      success: true,
-      link: link
-    });
+    req.files.forEach(file => {
+      // Xử lý từng file tại đây
+      
+    const fileId = file.filename.split('-')[0];
+    const link = 'http://' + req.hostname + ':' + process.env.PORT + '/video/' + fileId
+    links.push(link);
     const attributesToBeSaved = {
       id: fileId,
-      name: req.file.originalname,
-      size: req.file.size,
-      path: req.file.path,
-      encoding: req.file.encoding,
+      name: file.originalname,
+      size: file.size,
+      path: file.path,
+      encoding: file.encoding,
       details: req.body.details ? req.body.details : ''
     }
     handleDb.saveToDB(attributesToBeSaved);
+    });
+    
+    res.json({
+      success: true,
+      link: links
+    });
+   
     // return res.send(req.file);
   });
 }

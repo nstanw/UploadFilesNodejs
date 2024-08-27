@@ -1,3 +1,5 @@
+
+
 function onSubmit(e) {
   e.preventDefault();
   var customMessage = document.getElementById("message");
@@ -12,7 +14,9 @@ fetch("/api/interface-address")
   .then((response) => response.json())
   .then((data) => {
     var interfaceAddress = data.interfaceAddress;
+    var qrImage = data.QR;
     document.getElementById("ip-address").innerHTML = interfaceAddress;
+    document.getElementById("qr-image").src = qrImage;
     console.log(interfaceAddress);
   });
 
