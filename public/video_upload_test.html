@@ -8,57 +8,171 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      /* Đảm bảo body chiếm toàn bộ chiều cao của viewport */
+      min-height: 100vh;
       margin: 0;
-      /* Xóa lề mặc định */
-      padding-left: 5%
+      padding: 0;
+      background-color: #abd1c6;
+      font-family: Arial, sans-serif;
+      font-size: 18px; /* Increased base font size */
     }
-
-    /* Black */
+    .container {
+      width: 95%; /* Increased from 90% to 95% */
+      max-width: 800px; /* Increased from 600px to 800px for larger display */
+      padding: 30px; /* Increased padding */
+      background-color: #004643;
+      border-radius: 15px; /* Slightly increased border radius */
+    }
+    .nav-link {
+      color: #fffffe;
+      text-decoration: none;
+      font-size: 28px; /* Increased from 24px */
+      margin-right: 25px; /* Slightly increased margin */
+    }
+    .title {
+      font-size: 42px; /* Increased from 36px */
+      color: #fffffe;
+      text-align: center;
+      margin-bottom: 30px; /* Increased margin */
+    }
+    .qr-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 30px; /* Increased margin */
+    }
+    #qr-image {
+      width: 250px; /* Increased from 200px */
+      height: 250px; /* Increased from 200px */
+    }
+    .form-group {
+      margin-bottom: 30px; /* Increased margin */
+    }
+    .custom-label {
+      display: block;
+      color: #fffffe;
+      font-size: 22px; /* Increased from 18px */
+      margin-bottom: 15px; /* Increased margin */
+    }
+    .file-input {
+      width: 100%;
+      padding: 15px; /* Increased padding */
+      font-size: 18px; /* Increased from 16px */
+      background-color: #fffffe;
+      border: none;
+      border-radius: 8px; /* Slightly increased border radius */
+    }
+    .submit-button {
+      width: 100%;
+      padding: 20px; /* Increased padding */
+      font-size: 22px; /* Increased from 18px */
+      background-color: #f9bc60;
+      color: #004643;
+      border: none;
+      border-radius: 8px; /* Slightly increased border radius */
+      cursor: pointer;
+    }
+    #message {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 18px;
+      text-align: center;
+    }
+    .success {
+      background-color: #abd1c6;
+      color: #004643;
+    }
+    .error {
+      background-color: #e16162;
+      color: #fffffe;
+    }
+    #preview-container {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .preview-item {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
   </style>
 </head>
 
-<body style="font-size: 80px;">
-
-  <br />
-  <div id='main-div'>
-    <div>
-      <a href='/'>Trang chủ</a>
-      <a href='/gallery.html'>Thư viện</a>
-    </div>
-    <div>
-      <div style="background-color: #004643;">
-        <span style="font-size: 50px;">Nhập trên điện thoại,thiết bị</span>
-        <span id="ip-address" style="font-size: 45px;"></span>
-      </div>
-
-      <div style="background-color: #004643; margin-top: 20px;">
-        <span style="font-size: 50px;">Hoặc dùng QR sau:</span>
-        <div>
-          <img src="" id="qr-image" style="width: 200px; height: 200px;">
-        </div>
-      </div>
-      
+<body>
+  <div class="container">
+    <header>
+      <nav>
+        <a href='/' class="nav-link">Trang chủ</a>
+        <a href='/gallery.html' class="nav-link">Thư viện</a>
+      </nav>
+    </header>
     
+    <h1 class="title">Tải lên video hoặc hình ảnh</h1>
+    
+    <div>
+      <p style="color: #fffffe; font-size: 22px;">Nhập trên điện thoại, thiết bị: <span id="ip-address"></span></p>
     </div>
+
+    <div class="qr-container">
+      <img src="" id="qr-image" alt="QR Code">
+    </div>
+    
     <form enctype="multipart/form-data" name='videoUpload' id='video-upload'>
       <div class='form-group'>
-        <span class='custom-label'> Select file to upload</span>
-        <br />
-        <input multiple class="center" accept="video/mp4, video/quicktime, image/*" type="file" name="user-file"
-          style="width: 500px; height: 50px; margin-top: 30px;">
+        <label class='custom-label'>Chọn file để tải lên:</label>
+        <input multiple class="file-input" accept="video/mp4, video/quicktime, image/*" type="file" name="user-file" id="file-input">
       </div>
+      <div id="preview-container"></div>
       <div>
-        <input class="button" type="submit" id='submit' value="Upload File" onclick='onSubmit(event)' name="submit">
+        <input class="submit-button" type="submit" id='submit' value="Tải lên"  onclick='onSubmit(event)' name="submit">
       </div>
     </form>
 
-  </div>
-  <div id='message'>
-  </div>
+    <div id='message'></div>
   </div>
 
+  <script>
+    function previewFiles() {
+      const preview = document.getElementById('preview-container');
+      const files = document.getElementById('file-input').files;
+
+      preview.innerHTML = '';
+
+      function readAndPreview(file) {
+        if (/\.(jpe?g|png|gif)$/i.test(file.name)) {
+          const reader = new FileReader();
+
+          reader.addEventListener("load", function () {
+            const image = new Image();
+            image.height = 150;
+            image.title = file.name;
+            image.src = this.result;
+            image.className = 'preview-item';
+            preview.appendChild(image);
+          }, false);
+
+          reader.readAsDataURL(file);
+        } else if (/\.(mp4|mov|avi|webm)$/i.test(file.name)) {
+          const video = document.createElement('video');
+          video.width = 150;
+          video.height = 150;
+          video.title = file.name;
+          video.src = URL.createObjectURL(file);
+          video.className = 'preview-item';
+          video.controls = true;
+          preview.appendChild(video);
+        }
+      }
+
+      if (files) {
+        Array.from(files).forEach(readAndPreview);
+      }
+    }
+
+    document.getElementById('file-input').addEventListener('change', previewFiles);
+  </script>
 </body>
 
 </html>

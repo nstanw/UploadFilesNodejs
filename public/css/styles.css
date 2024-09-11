@@ -6,7 +6,7 @@ body {
   background-color: #abd1c6;
   display: block;
   margin: auto;
-  width:90%; /* hoặc bất kỳ giá trị nào bạn muốn */
+  width:98%; /* hoặc bất kỳ giá trị nào bạn muốn */
 }
 .custom-label {
   text-align: center;

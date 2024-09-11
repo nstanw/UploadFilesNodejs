@@ -1,27 +1,115 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link rel="stylesheet" href="css/styles.css">
+<style>
+  .container {
+    width: 95%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: #004643;
+    border-radius: 15px;
+  }
+  .gallery-section {
+    margin-bottom: 30px;
+  }
+  .gallery-title {
+    font-size: 28px;
+    color: #fffffe;
+    margin-bottom: 20px;
+  }
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  .gallery-item {
+    background-color: #abd1c6;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  .gallery-item img,
+  .gallery-item video {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  .gallery-item a {
+    display: block;
+    padding: 15px;
+    text-align: center;
+    color: #004643;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  .gallery-item-buttons {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+  }
+  .gallery-item-button {
+    padding: 8px 12px;
+    background-color: #f9bc60;
+    color: #004643;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+  }
+</style>
 </head>
 <body>
-  <a href="/">Home</a>
-  <a href="/gallery.html">Gallery</a>
-  <h3>Hình ảnh</h3>
-  <div id="image-gallery"></div>
-  <h3>Video</h3>
-  <div id="video-gallery"></div>
+  <div class="container">
+    <header style="margin-bottom: 30px;">
+      <nav style="display: flex; justify-content: center;">
+        <a href="/" class="nav-link" style="color: #fffffe; text-decoration: none; font-size: 24px; margin: 0 15px; padding: 10px; border-radius: 5px; transition: background-color 0.3s;">Trang chủ</a>
+        <a href="/gallery.html" class="nav-link" style="color: #fffffe; text-decoration: none; font-size: 24px; margin: 0 15px; padding: 10px; border-radius: 5px; transition: background-color 0.3s;">Thư viện</a>
+      </nav>
+    </header>
 
-  <script>
-    $(document).ready(function () {
-      $.get("/get-uploads", function (files) {
-        files.forEach(function (file) {
-          var fileExtension = file.split(".").pop();
-          var filePath = "/uploads/" + file;
-          if (fileExtension === 'jpg' || fileExtension === 'png' || fileExtension === 'jpeg' ) {
-          $('#image-gallery').append('<img src="' + filePath + '" style="width: 33%; height: auto; max-height: 56.25vw;" />');
-        } else if (fileExtension === 'mp4' || fileExtension === 'mov') {
-          $('#video-gallery').append('<video style="width: 33%; height: auto; max-height: 56.25vw;" controls><source src="' + filePath + '" type="video/' + (fileExtension === 'mov' ? 'quicktime' : 'mp4') + '">Your browser does not support the video tag.</video>');
-        }
+    <div class="gallery-section">
+      <h3 class="gallery-title">Hình ảnh</h3>
+      <div id="image-gallery" class="gallery-grid"></div>
+    </div>
+
+    <div class="gallery-section">
+      <h3 class="gallery-title">Video</h3>
+      <div id="video-gallery" class="gallery-grid"></div>
+    </div>
+
+    <div class="gallery-section">
+      <h3 class="gallery-title">Các dạng file khác</h3>
+      <div id="other-files" class="gallery-grid"></div>
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        $.get("/get-uploads", function (files) {
+          files.forEach(function (file) {
+            var fileExtension = file.split(".").pop().toLowerCase();
+            var filePath = "/uploads/" + file;
+            var galleryItem = $('<div class="gallery-item"></div>');
+
+            if (['jpg', 'png', 'jpeg', 'gif'].includes(fileExtension)) {
+              galleryItem.append('<img src="' + filePath + '" alt="' + file + '" />');
+              $('#image-gallery').append(galleryItem);
+            } else if (['mp4', 'mov', 'avi', 'webm'].includes(fileExtension)) {
+              galleryItem.append('<video controls><source src="' + filePath + '" type="video/' + (fileExtension === 'mov' ? 'quicktime' : fileExtension) + '">Your browser does not support the video tag.</video>');
+              $('#video-gallery').append(galleryItem);
+            } else {
+              galleryItem.append('<a href="' + filePath + '" target="_blank">' + file + '</a>');
+              $('#other-files').append(galleryItem);
+            }
+
+            var buttonsDiv = $('<div class="gallery-item-buttons"></div>');
+            buttonsDiv.append('<a href="' + filePath + '" download class="gallery-item-button">Tải xuống</a>');
+            buttonsDiv.append('<a href="' + filePath + '" target="_blank" class="gallery-item-button">Xem</a>');
+            galleryItem.append(buttonsDiv);
+          });
         });
       });
-    });
-  </script>
+    </script>
+  </div>
 </body>
 </html>
