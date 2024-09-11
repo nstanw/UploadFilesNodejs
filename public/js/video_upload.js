@@ -1,5 +1,3 @@
-
-
 function onSubmit(e) {
   e.preventDefault();
   var customMessage = document.getElementById("message");
@@ -51,15 +49,16 @@ function onComplete(event) {
   var customMessage = document.getElementById("message");
   const response = JSON.parse(event.currentTarget.response);
   if (response.success) {
-    document.getElementById("main-div").style.display = "none";
-    customMessage.style.color = "#9C27B0";
-    customMessage.innerHTML =
-      "Gallery Uploaded successfully!!. Please <a href=" +
-      "/gallery.html" +
-      ">click gallery</a> to view the gallery.";
+    customMessage.innerHTML = "Tải lên thành công!";
+    customMessage.className = "success";
+    setTimeout(() => {
+      document.getElementById("main-div").style.display = "none";
+      customMessage.innerHTML =
+        "Tải lên thành công! <a href='/gallery.html'>Nhấn vào đây</a> để xem thư viện.";
+    }, 2000);
   } else {
     customMessage.innerHTML = response.error;
-    customMessage.style.color = "red";
+    customMessage.className = "error";
   }
   document.getElementById("submit").disabled = false;
 }
@@ -67,7 +66,8 @@ function onComplete(event) {
 function fileUploadPercentage(e) {
   if (e.lengthComputable) {
     var customMessage = document.getElementById("message");
-    var percentage = (e.loaded / e.total) * 100;
-    customMessage.innerHTML = "Uploading Video: " + percentage + " %";
+    var percentage = Math.round((e.loaded / e.total) * 100);
+    customMessage.innerHTML = "Đang tải lên: " + percentage + "%";
+    customMessage.className = percentage === 100 ? "success" : "";
   }
 }
